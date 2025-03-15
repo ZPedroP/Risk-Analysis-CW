@@ -13,9 +13,9 @@ clear; close all; clc; format long
 figswitch=1 % Set figswitch=1 to show figures, else set figswitch=0.
 
 
-filename = 'Prices.xlsx';
 imgDir = 'Images/'; % Directory for saving figures
 txtDir = 'Results/'; % Directory for saving results
+dataDir = 'datasets/Prices.xlsx'; % Directory for loading the dataset
 txtFilename = fullfile(txtDir, 'Q1.txt');
 
 % Ensure directories exist
@@ -23,7 +23,7 @@ if ~exist(imgDir, 'dir'), mkdir(imgDir); end
 if ~exist(txtDir, 'dir'), mkdir(txtDir); end
 
 % Load dataset
-dataset = readtable(filename, 'MissingRule', 'omitrow');
+dataset = readtable(dataDir, 'MissingRule', 'omitrow');
 colLabels = dataset.Properties.VariableNames;
 tickers = colLabels(2:end); % Extract tickers
 histPrices = dataset{:, 2:end}; % Historical prices
