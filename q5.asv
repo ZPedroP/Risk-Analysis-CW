@@ -77,9 +77,9 @@ ProbBdays = mean(ProbNdays);
 %   CDF_{Normal(h*mu, sqrt(h)*sig)}(log(0.95)).
 
 % Basic stats
-mu  = mean(portLogRet);   % mean of daily log-returns
-sig = std(portLogRet);    % std of daily log-returns
-N   = length(portLogRet); % number of daily returns
+mu  = mean(dailyLogRets);   % mean of daily log-returns
+sig = std(dailyLogRets);    % std of daily log-returns
+N   = length(dailyLogRets); % number of daily returns
 
 probNormal = zeros(Ndays,1);
 threshold  = log(0.95);  % log(1 - 0.05)
@@ -91,14 +91,12 @@ for h = 1:Ndays
     probNormal(h) = normcdf(threshold, meanH, stdH);
 end
 
-% This is the second solution
-
 PortMean = mean(portLogRet);
 PortStd = std(portLogRet);
 ndays = 1:50; % Time horizons from 1 to 50 days
 
 % Probability of losing more than 5% using Gaussian assumption
-prob_gaus = normcdf((threshold - ndays * PortMean) ./ (sqrt(ndays) * PortStd));
+prob_gaus = normcdf((-0.05 - ndays * PortMean) ./ (sqrt(ndays) * PortStd));
 
 
 %% ============================
