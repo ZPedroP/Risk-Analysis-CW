@@ -38,7 +38,7 @@ portfolioLogReturns = assetLogReturns * portfolioWeights; % Portfolio log-return
 %% 2) Bootstrap Simulation for Multi-Day Cumulative Returns
 % Set simulation parameters
 horizonDays = 50; % Time horizon for risk estimation (in days)
-numBootstrap = 10000; % Number of bootstrap iterations
+numBootstrap = 1000; % Number of bootstrap iterations
 
 % Preallocate matrix for storing bootstrap probability estimates
 bootstrapProb = zeros(numBootstrap, horizonDays); % Bootstrap probability estimates
@@ -47,26 +47,18 @@ bootstrapProb = zeros(numBootstrap, horizonDays); % Bootstrap probability estima
 % A 5% loss corresponds to log(0.95) (≈ -0.0513)
 lossThreshold = log(0.95);
 
-% Run bootstrap simulations
-for i = 1:numBootstrap
-    % Generate random indices for simulating return paths
-    % Each column represents a simulated path over 'horizonDays' using 'numPeriods' available returns
-    randomIndices = randi(numPeriods, numPeriods, horizonDays);
-    
-    % Simulate cumulative portfolio log-returns along each bootstrap path.
-    % For each simulated path (each row), compute the cumulative sum over days.
-    simulatedCumulativeReturns = cumsum(portfolioLogReturns(randomIndices), 2);
-    
-    % For each day in the horizon, compute the proportion of simulated paths 
-    % where the cumulative return falls below the loss threshold.
-    % Note: Divide by the number of simulated paths (numPeriods) per bootstrap iteration.
-    for day = 1:horizonDays
-        bootstrapProb(i, day) = nnz(simulatedCumulativeReturns(:, day) < lossThreshold) / numPeriods;
-    end
-end
+% Generate a matrix of random indices with dimensions [numPaths, horizonDays]
+% Each index is chosen uniformly from 1 to numPeriods, representing a random selection 
+% of historical daily returns for each simulated path over the specified horizon.
+randomIndices = randi(numPeriods, [numBootstrap, horizonDays]);
 
-% Average the bootstrap probability estimates over all bootstrap iterations
-avgBootstrapProbability = mean(bootstrapProb);
+% Compute the cumulative sum of portfolio log-returns along each simulated path.
+% The cumulative sum is taken across the columns (i.e., over the days).
+simulatedCumulative = cumsum(portfolioLogReturns(randomIndices), 2);
+
+% Calculate the average probability that the cumulative return in each simulated path 
+% falls below the loss threshold. This yields a vector of probabilities for each day.
+avgBootstrapProbability = mean(simulatedCumulative < lossThreshold);
 
 %% 3) Gaussian Theoretical Probability Estimate
 % Under the assumption that daily portfolio log-returns are normally distributed,
