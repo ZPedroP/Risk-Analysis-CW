@@ -19,10 +19,8 @@ dataTable = readtable(dataFile, 'MissingRule', 'omitrow');
 variableNames = dataTable.Properties.VariableNames;
 assetTickers = variableNames(2:end); % Assume first column holds dates
 prices = dataTable{:, 2:end}; % Historical asset prices
-prices = flipud(prices); % Flip to ensure chronological order
 
 dates = dataTable{:, 1}; % Historical dates
-dates = flipud(dates);
 
 % Get the number of observations and assets
 [numObs, numAssets] = size(prices);
