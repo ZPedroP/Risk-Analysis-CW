@@ -6,7 +6,7 @@ clear; close all; clc; format short
 % Toggle saving figures (1 = save, 0 = do not save)
 figswitch = 0;
 
-dataDir = 'datasets/Prices.xlsx'; % Directory for loading the dataset
+filename = 'datasets/Prices.xlsx'; % Directory for loading the dataset
 imgDir = 'Images/';    % Directory for saving figures
 txtDir = 'Results/';   % Directory for saving results
 txtFilename = fullfile(txtDir, 'Q2.txt');
@@ -16,7 +16,7 @@ if ~exist(imgDir, 'dir'), mkdir(imgDir); end
 if ~exist(txtDir, 'dir'), mkdir(txtDir); end
 
 % Load dataset
-dataset = readtable(dataDir, 'MissingRule', 'omitrow');
+dataset = readtable(filename, 'MissingRule', 'omitrow');
 colLabels = dataset.Properties.VariableNames;
 tickers = colLabels(2:end);    % Extract tickers
 histPrices = dataset{:, 2:end};  % Historical prices
@@ -66,7 +66,7 @@ xlabel('Asset'); ylabel('Component VaR (%)');
 if figswitch, print(h, '-dpng', fullfile(imgDir, 'ComponentVaR_EW_Param.png')); end
 
 %% ===========================
-%  Portfolio Optimization
+%  Portfolio Optimisation
 % ===========================
 % 1. Equally Weighted: w_eq (already defined)
 

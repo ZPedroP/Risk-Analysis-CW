@@ -5,8 +5,8 @@ rng(123);
 % Define file and folder names for inputs and outputs
 dataFile = 'datasets/Prices.xlsx'; % Excel file with historical asset prices
 marketName = 'Top 6 Tech Stocks';  % Market name (for display or labeling purposes)
-figuresDir = 'Images/';            % Directory to save generated figures
-resultsDir = 'Results/';           % Directory to save any result files
+figuresDir = 'images/';            % Directory to save generated figures
+resultsDir = 'results/';           % Directory to save any result files
 
 % Create output directories if they do not exist
 if ~exist(figuresDir, 'dir'), mkdir(figuresDir); end
@@ -94,9 +94,6 @@ ylabel('Probability of $>$5\% Loss', 'Interpreter', 'latex');
 title('Comparison of Bootstrap and Gaussian Estimates for $>$5\% Loss Over 50-Day Horizon', 'Interpreter', 'latex');
 legend('Bootstrap Estimate', 'Gaussian Estimate', 'Location', 'best', 'Interpreter', 'latex');
 grid on;
-
-% Save the figure to the specified directory
-saveas(figureHandle, fullfile(figuresDir, 'Bootstrap_vs_Gaussian_Probability.png'));
 
 % Save the figure to the specified directory
 saveas(figureHandle, fullfile(figuresDir, 'Bootstrap_vs_Gaussian_Probability.png'));
