@@ -1,4 +1,5 @@
 clear; close all; clc;
+rng(123);
 
 %% 1) Load Data and Define Market Parameters
 % Define file and folder names for inputs and outputs
@@ -89,10 +90,25 @@ plot(1:horizonDays, gaussianProbability, 'r-', 'LineWidth', 1.5); % Gaussian est
 
 % Label the plot using LaTeX interpreter for consistency
 xlabel('Time Horizon (Days)', 'Interpreter', 'latex');
-ylabel('Probability of >5\% Loss', 'Interpreter', 'latex');
+ylabel('Probability of $>$5\% Loss', 'Interpreter', 'latex');
 title('Comparison of Bootstrap and Gaussian Estimates for $>$5\% Loss Over 50-Day Horizon', 'Interpreter', 'latex');
 legend('Bootstrap Estimate', 'Gaussian Estimate', 'Location', 'best', 'Interpreter', 'latex');
 grid on;
 
 % Save the figure to the specified directory
 saveas(figureHandle, fullfile(figuresDir, 'Bootstrap_vs_Gaussian_Probability.png'));
+
+% Save the figure to the specified directory
+saveas(figureHandle, fullfile(figuresDir, 'Bootstrap_vs_Gaussian_Probability.png'));
+
+%% 5) Display Probability Estimates in a Table
+% Create a table containing the horizon days along with probability estimates
+resultsTable = table((1:horizonDays)', avgBootstrapProbability(:), gaussianProbability(:), ...
+    'VariableNames', {'HorizonDays', 'BootstrapProbability', 'GaussianProbability'});
+
+% Display the table in the command window
+disp('Probability Estimates Table:');
+disp(resultsTable);
+
+% (Optional) Save the table to a CSV file for future reference
+writetable(resultsTable, fullfile(resultsDir, 'Probability_Estimates.csv'));
