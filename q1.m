@@ -23,9 +23,7 @@ dataset = readtable(filename, 'MissingRule', 'omitrow');
 colLabels = dataset.Properties.VariableNames;
 tickers = colLabels(2:end); % Extract tickers
 histPrices = dataset{:, 2:end}; % Historical prices
-histPrices = flipud(histPrices);
 histDates = dataset{:, 1}; % Historical dates
-histDates = flipud(histDates);
 [NObs, NAsset] = size(histPrices);
 tradeDates = histDates(2:end);
 
