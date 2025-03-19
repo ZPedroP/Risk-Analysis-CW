@@ -4,7 +4,7 @@
 clear; close all; clc; format short
 
 % Toggle saving figures (1 = save, 0 = do not save)
-figswitch = 0;
+figswitch = 1;
 
 filename = 'datasets/Prices.xlsx'; % Directory for loading the dataset
 imgDir = 'Images/';    % Directory for saving figures
@@ -228,21 +228,33 @@ if figswitch, print(h2, '-dpng', fullfile(imgDir, 'CumulativeReturns.png')); end
 
 % 2. Sharpe Ratios Bar Chart
 h3 = figure();
-bar(strategies, [Sharpe_EQ, Sharpe_RP, Sharpe_MD, Sharpe_RPnp]);
+b1 = bar(strategies, [Sharpe_EQ, Sharpe_RP, Sharpe_MD, Sharpe_RPnp]);
+b1.FaceColor = 'flat';
+colors = [
+    0, 0.4470, 0.7410;    % Blue (EQ)
+    0.8500, 0.3250, 0.0980; % Orange (RP_param)
+    0.9290, 0.6940, 0.1250; % Yellow (MD)
+    0.4940, 0.1840, 0.5560; % Purple (RP_nonparam)
+];
+b1.CData = colors;
 title('Sharpe Ratios Comparison');
 xlabel('Portfolio Strategy'); ylabel('Annualized Sharpe Ratio');
 if figswitch, print(h3, '-dpng', fullfile(imgDir, 'SharpeRatios.png')); end
 
 % 3. Maximum Drawdowns Bar Chart
 h4 = figure();
-bar(strategies, [MaxDD_EQ, MaxDD_RP, MaxDD_MD, MaxDD_RPnp]);
+b2 = bar(strategies, [MaxDD_EQ, MaxDD_RP, MaxDD_MD, MaxDD_RPnp]);
+b2.FaceColor = 'flat';
+b2.CData = colors;
 title('Maximum Drawdown Comparison');
 xlabel('Portfolio Strategy'); ylabel('Maximum Drawdown');
 if figswitch, print(h4, '-dpng', fullfile(imgDir, 'MaxDrawdowns.png')); end
 
 % 4. VaR Violations Bar Chart (95% Confidence)
 h5 = figure();
-bar(strategies, [viol_EQ, viol_RP, viol_MD, viol_RPnp]);
+b3 = bar(strategies, [viol_EQ, viol_RP, viol_MD, viol_RPnp]);
+b3.FaceColor = 'flat';
+b3.CData = colors;
 title('Number of VaR Violations (95% Confidence)');
 xlabel('Portfolio Strategy'); ylabel('Violations Count');
 if figswitch, print(h5, '-dpng', fullfile(imgDir, 'VaRViolations.png')); end
