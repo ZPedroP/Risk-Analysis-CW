@@ -1,7 +1,7 @@
 Row,Violations_90,Violations_99
-Bootstrap,268,43
-Block Bootstrap,280,48
-Hybrid Block-Filtered,302,58
+Bootstrap,269,44
+Block Bootstrap,277,48
+Hybrid Block-Filtered,306,54
 Gaussian,261,78
 Student T (MM),251,55
 EWMA,256,57

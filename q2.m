@@ -20,9 +20,7 @@ dataset = readtable(filename, 'MissingRule', 'omitrow');
 colLabels = dataset.Properties.VariableNames;
 tickers = colLabels(2:end);    % Extract tickers
 histPrices = dataset{:, 2:end};  % Historical prices
-histPrices = flipud(histPrices);
 histDates = dataset{:, 1};      % Historical dates
-histDates = flipud(histDates);
 [NObs, NAsset] = size(histPrices);
 
 % Compute Asset Log-Returns
@@ -150,25 +148,25 @@ disp(T_Component_RPnp);
 
 % 1) Equally Weighted
 portRet_EQ = test * w_eq;
-Sharpe_EQ = mean(portRet_EQ) / std(portRet_EQ);
+Sharpe_EQ = mean(portRet_EQ) / std(portRet_EQ) * sqrt(252);
 cumRet_EQ = exp(cumsum(portRet_EQ));
 MaxDD_EQ = maxdrawdown(cumRet_EQ);
 
 % 2) Risk Parity (Parametric)
 portRet_RP = test * w_rp;
-Sharpe_RP = mean(portRet_RP) / std(portRet_RP);
+Sharpe_RP = mean(portRet_RP) / std(portRet_RP) * sqrt(252);
 cumRet_RP = exp(cumsum(portRet_RP));
 MaxDD_RP = maxdrawdown(cumRet_RP);
 
 % 3) Maximum Diversification
 portRet_MD = test * w_md;
-Sharpe_MD = mean(portRet_MD) / std(portRet_MD);
+Sharpe_MD = mean(portRet_MD) / std(portRet_MD) * sqrt(252);
 cumRet_MD = exp(cumsum(portRet_MD));
 MaxDD_MD = maxdrawdown(cumRet_MD);
 
 % 4) Risk Parity (Non-Parametric)
 portRet_RPnp = test * w_rp_np;
-Sharpe_RPnp = mean(portRet_RPnp) / std(portRet_RPnp);
+Sharpe_RPnp = mean(portRet_RPnp) / std(portRet_RPnp) * sqrt(252);
 cumRet_RPnp = exp(cumsum(portRet_RPnp));
 MaxDD_RPnp = maxdrawdown(cumRet_RPnp);
 
