@@ -2,7 +2,8 @@
 %  Load Data and SWITCHES
 % Adapted from Fusai (2025) Tutorial sessions for Risk Analysis at Bayes Business School
 %% ===========================
-clear; close all; clc; format long
+rng(123)
+clear; close all; clc; format shortG
 tic()
 
 % Switches: 
@@ -37,6 +38,7 @@ mu = mean(portRet);
 sigma = std(portRet);
 kurt = kurtosis(portRet);
 skew = skewness(portRet);
+summarystats=[mu, sigma, kurt, skew, min(portRet,[],1), max(portRet,[],1)]
 
 % Time Series Plot of Portfolio Returns
 figure;
@@ -57,7 +59,7 @@ grid on;
 if figswitch, print(gcf, '-dpng', fullfile(imgDir, 'Histogram_Portfolio.png')); end
 
 % Jarque-Bera Normality Test
-jb = jbtest(portRet);
+[jb_h,jb_p,jjb_bstat,jb_critval] = jbtest(portRet)
 
 % Rolling Mean and Standard Deviation (6-month window ~126 trading days)
 windowSize = 126; 
@@ -90,7 +92,7 @@ grid on;
 if figswitch, print(gcf, '-dpng', fullfile(imgDir, 'Autocorr_SquaredReturns.png')); end
 
 % ARCH Test for Volatility Clustering
-[h_arch, pValue_arch] = archtest(portRet);
+[h_arch, pValue_arch, stat_arch, arch_critval ] = archtest(portRet);
 fprintf('ARCH test result: h = %d, p-value = %.4f\n', h_arch, pValue_arch);
 
 % Cumulative Returns Calculation
@@ -263,41 +265,112 @@ for i = 1:nRolling
     end
 end
 
-%% Plotting VaR Estimates and Saving Figures if figswitch is true
+% %% Plotting VaR Estimates and Saving Figures if figswitch is true
+% if figswitch
+%     % Plot and save 99% VaR estimates for all methods
+%     figure;
+%     plot(rollingWindowEndDates, VaR_boot_point(:,2), 'LineWidth', 1.5); hold on;
+%     plot(rollingWindowEndDates, VaR_block_point(:,2), 'LineWidth', 1.5);
+%     plot(rollingWindowEndDates, VaR_filtered_point(:,2), 'LineWidth', 1.5);
+%     plot(rollingWindowEndDates, VaR_gauss(:,2), 'LineWidth', 1.5);
+%     plot(rollingWindowEndDates, VaR_t_MM(:,2), 'LineWidth', 1.5);
+%     plot(rollingWindowEndDates, VaR_EWMA(:,2), 'LineWidth', 1.5);
+%     title('Daily Rolling 99% VaR Estimates');
+%     xlabel('Date');
+%     ylabel('VaR (Loss)');
+%     legend('Bootstrap','Block Bootstrap','Hybrid Block-Filtered',...
+%            'Gaussian','Student T (MM)','EWMA (RiskMetrics)','Location', 'Best');
+%     grid on;
+%     print(gcf, '-dpng', fullfile(imgDir, 'VaR_Estimates_99.png'));
+% 
+%     % Plot and save 90% VaR estimates
+%     figure;
+%     plot(rollingWindowEndDates, VaR_boot_point(:,1), 'LineWidth', 1.5); hold on;
+%     plot(rollingWindowEndDates, VaR_block_point(:,1), 'LineWidth', 1.5);
+%     plot(rollingWindowEndDates, VaR_filtered_point(:,1), 'LineWidth', 1.5);
+%     plot(rollingWindowEndDates, VaR_gauss(:,1), 'LineWidth', 1.5);
+%     plot(rollingWindowEndDates, VaR_t_MM(:,1), 'LineWidth', 1.5);
+%     plot(rollingWindowEndDates, VaR_EWMA(:,1), 'LineWidth', 1.5);
+%     title('Daily Rolling 90% VaR Estimates');
+%     xlabel('Date');
+%     ylabel('VaR (Loss)');
+%     legend('Bootstrap','Block Bootstrap','Hybrid Block-Filtered',...
+%            'Gaussian','Student T (MM)','EWMA (RiskMetrics)','Location', 'Best');
+%     grid on;
+%     print(gcf, '-dpng', fullfile(imgDir, 'VaR_Estimates_90.png'));
+% end
+
+%%
+% Alternative plots
+
 if figswitch
-    % Plot and save 99% VaR estimates for all methods
+    % Define colors for parametric methods
+    color_gauss = [0.5 0 0.5];   % Purple
+    color_tMM   = [0 0.8 0];      % Green
+    color_EWMA  = [0.5 0.7 1];    % Light Blue
+
+    % For 99% VaR estimates - Parametric Approaches
+    figure;
+    plot(rollingWindowEndDates, VaR_gauss(:,2), 'LineWidth', 1.5, 'Color', color_gauss); hold on;
+    plot(rollingWindowEndDates, VaR_t_MM(:,2), 'LineWidth', 1.5, 'Color', color_tMM);
+    plot(rollingWindowEndDates, VaR_EWMA(:,2), 'LineWidth', 1.5, 'Color', color_EWMA);
+    title('Daily Rolling 99% VaR Estimates (Parametric Approaches)');
+    xlabel('Date');
+    ylabel('VaR (Loss)');
+    legend('Gaussian', 'Student T (MM)', 'EWMA (RiskMetrics)', 'Location', 'Best');
+    grid on;
+    print(gcf, '-dpng', fullfile(imgDir, 'VaR_Parametric_99.png'));
+    
+    % For 99% VaR estimates - Bootstrap Variations
     figure;
     plot(rollingWindowEndDates, VaR_boot_point(:,2), 'LineWidth', 1.5); hold on;
     plot(rollingWindowEndDates, VaR_block_point(:,2), 'LineWidth', 1.5);
     plot(rollingWindowEndDates, VaR_filtered_point(:,2), 'LineWidth', 1.5);
-    plot(rollingWindowEndDates, VaR_gauss(:,2), 'LineWidth', 1.5);
-    plot(rollingWindowEndDates, VaR_t_MM(:,2), 'LineWidth', 1.5);
-    plot(rollingWindowEndDates, VaR_EWMA(:,2), 'LineWidth', 1.5);
-    title('Daily Rolling 99% VaR Estimates');
+    title('Daily Rolling 99% VaR Estimates (Bootstrap Variations)');
     xlabel('Date');
     ylabel('VaR (Loss)');
-    legend('Bootstrap','Block Bootstrap','Hybrid Block-Filtered',...
-           'Gaussian','Student T (MM)','EWMA (RiskMetrics)','Location', 'Best');
+    legend('Bootstrap', 'Block Bootstrap', 'Hybrid Block-Filtered', 'Location', 'Best');
     grid on;
-    print(gcf, '-dpng', fullfile(imgDir, 'VaR_Estimates_99.png'));
+    print(gcf, '-dpng', fullfile(imgDir, 'VaR_Bootstrap_99.png'));
     
-    % Plot and save 90% VaR estimates
+    % For 90% VaR estimates - Parametric Approaches
+    figure;
+    plot(rollingWindowEndDates, VaR_gauss(:,1), 'LineWidth', 1.5, 'Color', color_gauss); hold on;
+    plot(rollingWindowEndDates, VaR_t_MM(:,1), 'LineWidth', 1.5, 'Color', color_tMM);
+    plot(rollingWindowEndDates, VaR_EWMA(:,1), 'LineWidth', 1.5, 'Color', color_EWMA);
+    title('Daily Rolling 90% VaR Estimates (Parametric Approaches)');
+    xlabel('Date');
+    ylabel('VaR (Loss)');
+    legend('Gaussian', 'Student T (MM)', 'EWMA (RiskMetrics)', 'Location', 'Best');
+    grid on;
+    print(gcf, '-dpng', fullfile(imgDir, 'VaR_Parametric_90.png'));
+    
+    % For 90% VaR estimates - Bootstrap Variations
     figure;
     plot(rollingWindowEndDates, VaR_boot_point(:,1), 'LineWidth', 1.5); hold on;
     plot(rollingWindowEndDates, VaR_block_point(:,1), 'LineWidth', 1.5);
     plot(rollingWindowEndDates, VaR_filtered_point(:,1), 'LineWidth', 1.5);
-    plot(rollingWindowEndDates, VaR_gauss(:,1), 'LineWidth', 1.5);
-    plot(rollingWindowEndDates, VaR_t_MM(:,1), 'LineWidth', 1.5);
-    plot(rollingWindowEndDates, VaR_EWMA(:,1), 'LineWidth', 1.5);
-    title('Daily Rolling 90% VaR Estimates');
+    title('Daily Rolling 90% VaR Estimates (Bootstrap Variations)');
     xlabel('Date');
     ylabel('VaR (Loss)');
-    legend('Bootstrap','Block Bootstrap','Hybrid Block-Filtered',...
-           'Gaussian','Student T (MM)','EWMA (RiskMetrics)','Location', 'Best');
+    legend('Bootstrap', 'Block Bootstrap', 'Hybrid Block-Filtered', 'Location', 'Best');
     grid on;
-    print(gcf, '-dpng', fullfile(imgDir, 'VaR_Estimates_90.png'));
+    print(gcf, '-dpng', fullfile(imgDir, 'VaR_Bootstrap_90.png'));
 end
 
+
+
+
+
+
+
+
+
+
+
+
+
+%%
 %% Question 1.3: Backtesting - Count VaR Violations
 % Forecast on day x evaluates return on day x+1.
 VaR_models = {VaR_boot_point, VaR_block_point, VaR_filtered_point, ...
