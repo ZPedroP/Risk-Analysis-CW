@@ -26,19 +26,6 @@ The analysis is conducted using daily adjusted closing prices of six large-cap t
 
 ```
 Risk-Analysis-Project/
-├── images/                         # Visual outputs from VaR and portfolio analyses
-├── results/                        # Saved tables and backtesting outputs
-├── datasets/                     
-    ├── Prices.xlsx                 # Daily asset prices (6 tech stocks)
-├── Report.pdf                      # Final write-up with results and interpretation
-├── Task.pdf                        # Coursework brief
-├── q1.m                            # MATLAB script for each task 1
-├── q2.m                            # MATLAB script for each task 2
-├── q5.m                            # MATLAB script for each task 5
-└── README.md
-```
-
-Risk-Analysis-Project/
 ├── datasets/                       # Input data files
 │   └── Prices.xlsx                 # Daily asset prices (6 tech stocks)
 ├── images/                         # Visual outputs from VaR and portfolio analyses
@@ -49,6 +36,7 @@ Risk-Analysis-Project/
 ├── q2.m                            # MATLAB script for task 2
 ├── q5.m                            # MATLAB script for task 5
 └── README.md
+```
 
 ## Results Summary
 
